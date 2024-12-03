@@ -5,20 +5,27 @@ import { State, postForm } from "../actions";
 import { MoonLoader } from "react-spinners";
 
 export default function LoginForm() {
-  const [state, formAction, isPending] = useActionState(postForm, {
-    message: undefined,
-    errors: {},
-  } as State);
+  const [state, formAction, isPending] = useActionState(
+    postForm as (
+      prevState: State,
+      formData: FormData,
+    ) => Promise<{
+      errors: { username?: string[]; token?: string[]; fetch?: string };
+    }>,
+    { errors: {} } as State,
+  );
+
+  console.log(state);
 
   if (isPending) {
     return (
-      <div className="w-96 h-[34rem] p-6 ">
+      <div className="h-[34rem] w-96 p-6">
         <header className="mb-3 text-center lg:mb-10 lg:text-right">
           <h1 className="text-5xl font-bold tracking-tighter">Welcome to</h1>
           <h2 className="mb-4 text-center text-7xl">Decidely</h2>
           <p className="text-gray-600">An application by Stijn Servaes</p>
         </header>
-        <div className="flex h-[20rem]  justify-center items-center">
+        <div className="flex h-[20rem] items-center justify-center">
           <MoonLoader color="blue" />
         </div>
       </div>
@@ -26,14 +33,21 @@ export default function LoginForm() {
   }
 
   return (
-    <div className="w-96 h-[34rem] p-6">
+    <div className="h-[34rem] w-96 p-6">
       <header className="mb-3 text-center lg:mb-10 lg:text-right">
         <h1 className="text-5xl font-bold tracking-tighter">Welcome to</h1>
         <h2 className="mb-4 text-center text-7xl">Decidely</h2>
         <p className="text-gray-600">An application by Stijn Servaes</p>
       </header>
+
       <form action={formAction}>
         <h1 className="mb-6 text-center text-3xl font-extrabold">Log-in</h1>
+
+        <div aria-live="polite" aria-atomic={true}>
+          {state.errors?.fetch && (
+            <p className="text-red-500">{state.errors.fetch}</p>
+          )}
+        </div>
 
         <label className="mb-1 block font-semibold" htmlFor="username">
           Username
@@ -46,8 +60,16 @@ export default function LoginForm() {
             name="username"
             id="username"
             placeholder="Type your username..."
-            required
+            aria-describedby="username-error"
           />
+        </div>
+        <div id="username-error" aria-live="polite" aria-atomic="true">
+          {state.errors?.username &&
+            state.errors.username.map((error) => (
+              <p key={error} className="mb-2 mt-[-1rem] text-red-500">
+                {error}
+              </p>
+            ))}
         </div>
 
         <label className="mb-1 block font-semibold" htmlFor="token">
@@ -61,8 +83,16 @@ export default function LoginForm() {
             name="token"
             id="token"
             placeholder="Type your token..."
-            required
+            aria-describedby="token-error"
           />
+        </div>
+        <div id="token-error" aria-live="polite" aria-atomic="true">
+          {state.errors?.token &&
+            state.errors.token.map((error) => (
+              <p key={error} className="mb-2 mt-[-1rem] text-red-500">
+                {error}
+              </p>
+            ))}
         </div>
 
         <button
