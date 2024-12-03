@@ -1,12 +1,23 @@
-"use client"
+"use client";
 
-import { deleteCookie } from "../booth/actions"
+import { deleteCookie } from "../booth/actions";
+import Image from "next/image";
+import image from "../../public/undraw_not_found_re_bh2e.svg";
 
 export default function RedirectPage() {
   return (
-    <div className="w-72 flex flex-col items-center space-y-10">
-      <h1 className="text-center text-blue-700 text-2xl font-mono">User token has expired. <br />Please log-in again</h1>
-      <button onClick={deleteCookie} className="text-center text-xl rounded bg-blue-700 text-white px-5 py-1 hover:text-blue-700 hover:bg-white hover:outline hover:outline-blue-700">Return to Login Screen</button>
+    <div className="flex w-72 flex-col items-center space-y-10 lg:w-[50rem]">
+      <Image src={image} alt="Not found"></Image>
+      <h1 className="text-center font-mono text-2xl text-blue-700 lg:text-5xl">
+        User token has expired. <br />
+        Please log-in again
+      </h1>
+      <button
+        onClick={deleteCookie}
+        className="rounded bg-blue-700 px-5 py-1 text-center text-xl text-white hover:bg-white hover:text-blue-700 hover:outline hover:outline-blue-700 lg:text-2xl"
+      >
+        Return to Login Screen
+      </button>
     </div>
-  )
+  );
 }
