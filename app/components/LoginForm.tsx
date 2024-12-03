@@ -15,7 +15,6 @@ export default function LoginForm() {
     { errors: {} } as State,
   );
 
-  console.log(state);
 
   if (isPending) {
     return (
