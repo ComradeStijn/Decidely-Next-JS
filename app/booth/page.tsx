@@ -105,7 +105,7 @@ export default async function Page() {
           <div>
             <h1 className="text-4xl italic">
               {forms.message.length === 0
-                ? "Too many requests. Please wait."
+                ? "There are no forms to vote on."
                 : ""}
             </h1>
           </div>
