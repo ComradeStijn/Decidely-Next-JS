@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import RedirectPage from "../components/RedirectPage";
 import VoteForms from "../components/VoteForms";
-import Loading from "./loading";
 import RefreshForm from "../components/RefreshForm";
 
 export type DecodedToken = {
@@ -54,7 +53,7 @@ export default async function Page() {
 
   let forms: FetchForm;
   let proxyAmount: FetchProxy;
-  let tooManyReq: Boolean = false;
+  let tooManyReq: boolean = false;
   try {
     const fetchForms = await fetch("https://decidely-api.onrender.com/forms", {
       method: "GET",
