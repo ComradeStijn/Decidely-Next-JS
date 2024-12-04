@@ -106,7 +106,7 @@ export default async function Page() {
             <h1 className="text-4xl italic">
               {tooManyReq
                 ? "Too many requests. Please wait."
-                : "There are no forms to be voted upon."}
+                : ""}
             </h1>
           </div>
           <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
