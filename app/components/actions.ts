@@ -3,9 +3,8 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import z from "zod";
 
-
 export type State = {
-  message?: string,
+  message?: string;
   errors?: {
     amount?: string;
   };
@@ -18,12 +17,12 @@ type ProxyResponseBody = {
 
 type VoteResponseBody = {
   success: boolean;
-  message: string
-}
+  message: string;
+};
 
 export async function voteOnForm(prevState: State, formData: FormData) {
   const formId = formData.get("formId");
-  const formattedData: Record<string, string> = {};
+  const formattedData: { decision: string, amount: number }[] = [];
 
   const authToken = (await cookies()).get("auth_token");
 
@@ -46,18 +45,23 @@ export async function voteOnForm(prevState: State, formData: FormData) {
 
   for (const [key, value] of formData.entries()) {
     if (!key.startsWith("$") && key !== "formId") {
-      formattedData[key] = isNaN(Number(value)) ? "0" : String(value);
+      formattedData.push({
+        decision: key,
+        amount: isNaN(Number(value)) ? 0 : Number(value)
+      });
     }
   }
 
-  const parsedData = DecisionSchema.safeParse(formattedData);
+  const parsedData = DecisionArraySchema.safeParse(formattedData);
   if (!parsedData.success) {
     throw new Error("Critical Failure to Parse Data in Server Action");
   }
 
-  const castedVoteAmount = Object.values(parsedData.data).reduce(
-    (acc, cur) => acc + cur,
-  );
+  console.log(parsedData)
+
+  const castedVoteAmount = parsedData.data.reduce((acc, cur) => {
+    return acc + cur.amount
+  }, 0)
   if (castedVoteAmount !== parsedProxyFetch.message) {
     return {
       message: "Failure",
@@ -73,18 +77,24 @@ export async function voteOnForm(prevState: State, formData: FormData) {
       headers: {
         "Authorization": `Bearer ${authToken?.value}`,
         "Content-Type": "application/json"
-      }
+      },
+      body:  JSON.stringify({
+        decisions: parsedData.data
+      })
     })
     const data: VoteResponseBody = await response.json();
-    console.log(data)
+    console.log("Response: ", data)
 
   } catch (e) {
     throw new Error(`Network error: ${e}`)
   }
 
-  revalidatePath("/dashboard")
-
+  revalidatePath("/dashboard");
   return {};
 }
 
-const DecisionSchema = z.record(z.string().transform((val) => Number(val)));
+const DecisionSchema = z.object({
+  decision: z.string(),
+  amount: z.number()
+})
+const DecisionArraySchema = z.array(DecisionSchema)

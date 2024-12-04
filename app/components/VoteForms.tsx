@@ -19,9 +19,8 @@ export default function VoteForms({
   });
 
   const [vote, setVote] = useState(defaultFormValue);
-  const remainingVotes = proxyAmount - Object.values(vote).reduce((acc, cur) => acc + cur);
-  console.log("remainingVotes", remainingVotes)
-  console.log("votes", vote)
+  const remainingVotes =
+    proxyAmount - Object.values(vote).reduce((acc, cur) => acc + cur);
 
   const handleSelectionChange = (decisionId: string, value: number) => {
     setVote((prevState) => ({
@@ -35,20 +34,21 @@ export default function VoteForms({
     errors: {},
   } as State);
 
+  const choicesNumberArray = Array.from(Array(proxyAmount + 1).keys());
+
   if (isPending) {
     return (
-      <article className="flex min-h-44 items-center justify-center p-4 shadow-md">
-        <MoonLoader />
+      <article className="flex min-h-44 flex-col items-center justify-center rounded-xl bg-blue-900 p-4 shadow-md">
+        <MoonLoader color="white" />
+        <h1 className="font-mono text-white">This can take a while...</h1>
       </article>
     );
   }
 
-  const choicesNumberArray = Array.from(Array(proxyAmount + 1).keys());
-
   return (
     <form
       action={formAction}
-      className="flex flex-col justify-center items-center rounded-xl bg-blue-700 px-10 py-6 shadow-2xl"
+      className="flex flex-col items-center justify-center rounded-xl bg-blue-700 px-10 py-6 shadow-2xl"
     >
       <h2 className="mb-4 text-center text-2xl font-semibold text-white">
         {form.title}
@@ -65,7 +65,7 @@ export default function VoteForms({
           className="mb-5 flex flex-col justify-center"
         >
           <label
-            className="mb-1 font-mono text-xl font-semibold text-white text-center"
+            className="mb-1 text-center font-mono text-xl font-semibold text-white"
             htmlFor={decision.id}
           >
             {decision.title}
@@ -84,7 +84,10 @@ export default function VoteForms({
                   value={amount}
                   className="peer hidden"
                   onChange={() => handleSelectionChange(decision.id, amount)}
-                  disabled={remainingVotes + vote[decision.id] < amount  && vote[decision.id] < amount}
+                  disabled={
+                    remainingVotes + vote[decision.id] < amount &&
+                    vote[decision.id] < amount
+                  }
                 />
                 <label
                   className="rounded-full px-3 py-1 text-xl text-white outline outline-1 hover:cursor-pointer peer-checked:bg-white peer-checked:font-bold peer-checked:text-blue-700 peer-disabled:bg-blue-700 peer-disabled:text-blue-700 peer-disabled:outline-none"
@@ -98,15 +101,11 @@ export default function VoteForms({
         </fieldset>
       ))}
       <button
-      className={`bg-yellow-500 self-stretch py-3 mt-1 text-blue-900 font-mono font-bold rounded-lg text-3xl
-        hover:bg-blue-900 hover:text-yellow-500 hover:outline hover:outline-yellow-500 
-        transition-opacity duration-300
-        ${Boolean(remainingVotes) ? 'opacity-10 pointer-events-none' : 'opacity-100'}
-      `}
-      disabled={Boolean(remainingVotes)}
-    >
-      VOTE
-    </button>
+        className={`mt-1 self-stretch rounded-lg bg-yellow-500 py-3 font-mono text-3xl font-bold text-blue-900 transition-opacity duration-300 hover:bg-blue-900 hover:text-yellow-500 hover:outline hover:outline-yellow-500 ${Boolean(remainingVotes) ? "pointer-events-none opacity-10" : "opacity-100"} `}
+        disabled={Boolean(remainingVotes)}
+      >
+        VOTE
+      </button>
     </form>
   );
 }

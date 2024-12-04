@@ -24,8 +24,9 @@ export default function LoginForm() {
           <h2 className="mb-4 text-center text-7xl">Decidely</h2>
           <p className="text-gray-600">An application by Stijn Servaes</p>
         </header>
-        <div className="flex h-[20rem] items-center justify-center">
+        <div className="flex h-[20rem] flex-col items-center justify-center">
           <MoonLoader color="blue" />
+          <h1 className="font-mono">This can take a while...</h1>
         </div>
       </div>
     );

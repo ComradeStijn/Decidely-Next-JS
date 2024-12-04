@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { redirect } from "next/navigation";
 import RedirectPage from "../components/RedirectPage";
 import VoteForms from "../components/VoteForms";
+import Loading from "./loading";
 
 export type DecodedToken = {
   sub: string;
@@ -47,6 +48,8 @@ export default async function Page() {
     return <RedirectPage />;
   }
 
+  // await new Promise((resolve) => setTimeout(resolve, 5000))
+
   let forms: FetchForm;
   let proxyAmount: FetchProxy;
   try {
@@ -74,20 +77,27 @@ export default async function Page() {
     throw new Error(`Network Error: ${e}`);
   }
 
+
   return (
     <div className="w-[18rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem]">
       <h1 className="mb-10 text-3xl lg:text-7xl">
         Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
       </h1>
-      <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
-        {forms.message.map((form) => (
-          <VoteForms
-            key={form.id}
-            form={form}
-            proxyAmount={proxyAmount.message}
-          />
-        ))}
-      </div>
+      {forms.message.length === 0 ? (
+        <div>
+          <h1 className="text-4xl italic">There are no forms to be voted upon.</h1>
+        </div>
+      ) : (
+        <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+          {forms.message.map((form) => (
+            <VoteForms
+              key={form.id}
+              form={form}
+              proxyAmount={proxyAmount.message}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

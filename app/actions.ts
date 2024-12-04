@@ -35,8 +35,6 @@ export async function postForm(prevState: State, formData: FormData) {
     token: parsedData.data.token,
   };
 
-  await new Promise((resolve) => setTimeout(resolve, 5000))
-
   try {
     const response = await fetch("https://decidely-api.onrender.com/login", {
       body: JSON.stringify(payload),
