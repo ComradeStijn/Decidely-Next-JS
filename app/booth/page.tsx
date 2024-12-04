@@ -63,7 +63,7 @@ export default async function Page() {
       },
     });
     forms = await fetchForms.json();
-    console.log(forms)
+    console.log(forms);
     if (forms.error?.includes("Too many requests")) {
       tooManyReq = true;
     }
@@ -97,19 +97,28 @@ export default async function Page() {
           <h1 className="text-4xl italic">
             {tooManyReq
               ? "Too many requests. Please wait."
-              : "There are no forms to be voted upon."}
+              : "An unknown error has occurred while fetching forms."}
           </h1>
         </div>
       ) : (
-        <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
-          {forms.message.map((form) => (
-            <VoteForms
-              key={form.id}
-              form={form}
-              proxyAmount={proxyAmount.message}
-            />
-          ))}
-        </div>
+        <>
+          <div>
+            <h1 className="text-4xl italic">
+              {tooManyReq
+                ? "Too many requests. Please wait."
+                : "There are no forms to be voted upon."}
+            </h1>
+          </div>
+          <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
+            {forms.message.map((form) => (
+              <VoteForms
+                key={form.id}
+                form={form}
+                proxyAmount={proxyAmount.message}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
