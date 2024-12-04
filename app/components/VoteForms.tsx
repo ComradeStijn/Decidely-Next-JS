@@ -14,11 +14,17 @@ export default function VoteForms({
   proxyAmount: number;
 }) {
   const defaultFormValue: { [key: string]: number } = {};
+  const [vote, setVote] = useState(defaultFormValue);
+  const [state, formAction, isPending] = useActionState(voteOnForm, {
+    message: "",
+    errors: {},
+  } as State);
+
   form.decisions.forEach((decision) => {
     defaultFormValue[decision.id] = 0;
   });
 
-  const [vote, setVote] = useState(defaultFormValue);
+
   const remainingVotes =
     proxyAmount - Object.values(vote).reduce((acc, cur) => acc + cur);
 
@@ -29,10 +35,6 @@ export default function VoteForms({
     }));
   };
 
-  const [state, formAction, isPending] = useActionState(voteOnForm, {
-    message: "",
-    errors: {},
-  } as State);
 
   const choicesNumberArray = Array.from(Array(proxyAmount + 1).keys());
 

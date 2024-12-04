@@ -20,6 +20,7 @@ type VoteResponseBody = {
   message: string;
 };
 
+// VoteForm.tsx
 export async function voteOnForm(prevState: State, formData: FormData) {
   const formId = formData.get("formId");
   const formattedData: { decision: string, amount: number }[] = [];
@@ -39,6 +40,15 @@ export async function voteOnForm(prevState: State, formData: FormData) {
       },
     );
     parsedProxyFetch = await proxyFetch.json();
+
+    if (!parsedProxyFetch.success) {
+      return {
+        message: "Failure",
+        errors: {
+          amount: parsedProxyFetch.message as string
+        }
+      }
+    }
   } catch (e) {
     throw new Error(`Network error: ${e}`);
   }
@@ -56,8 +66,6 @@ export async function voteOnForm(prevState: State, formData: FormData) {
   if (!parsedData.success) {
     throw new Error("Critical Failure to Parse Data in Server Action");
   }
-
-  console.log(parsedData)
 
   const castedVoteAmount = parsedData.data.reduce((acc, cur) => {
     return acc + cur.amount
@@ -98,3 +106,10 @@ const DecisionSchema = z.object({
   amount: z.number()
 })
 const DecisionArraySchema = z.array(DecisionSchema)
+
+
+
+// RefreshForm.tsx
+export async function refreshForm() {
+  revalidatePath('/dashboard')
+}

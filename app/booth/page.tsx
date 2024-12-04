@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import RedirectPage from "../components/RedirectPage";
 import VoteForms from "../components/VoteForms";
 import Loading from "./loading";
+import RefreshForm from "../components/RefreshForm";
 
 export type DecodedToken = {
   sub: string;
@@ -17,6 +18,7 @@ export type DecodedToken = {
 type FetchForm = {
   success: boolean;
   message: Form[];
+  error?: string;
 };
 
 type FetchProxy = {
@@ -52,6 +54,7 @@ export default async function Page() {
 
   let forms: FetchForm;
   let proxyAmount: FetchProxy;
+  let tooManyReq: Boolean = false;
   try {
     const fetchForms = await fetch("https://decidely-api.onrender.com/forms", {
       method: "GET",
@@ -61,6 +64,11 @@ export default async function Page() {
       },
     });
     forms = await fetchForms.json();
+    console.log(forms)
+    if (forms.error?.includes("Too many requests")) {
+      tooManyReq = true;
+    }
+    // { error: 'Too many requests, please try again later.' }
 
     const fetchProxy = await fetch(
       "https://decidely-api.onrender.com/forms/proxy",
@@ -77,15 +85,21 @@ export default async function Page() {
     throw new Error(`Network Error: ${e}`);
   }
 
-
   return (
     <div className="w-[18rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem]">
-      <h1 className="mb-10 text-3xl lg:text-7xl">
-        Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
-      </h1>
-      {forms.message.length === 0 ? (
+      <div className="mb-5 flex flex-col items-center justify-between md:mb-10 md:flex-row">
+        <h1 className="text-center text-3xl lg:text-7xl">
+          Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
+        </h1>
+        <RefreshForm />
+      </div>
+      {!Array.isArray(forms.message) ? (
         <div>
-          <h1 className="text-4xl italic">There are no forms to be voted upon.</h1>
+          <h1 className="text-4xl italic">
+            {tooManyReq
+              ? "Too many requests. Please wait."
+              : "There are no forms to be voted upon."}
+          </h1>
         </div>
       ) : (
         <div className="grid gap-10 md:grid-cols-2 xl:grid-cols-3">
