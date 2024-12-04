@@ -104,7 +104,7 @@ export default async function Page() {
         <>
           <div>
             <h1 className="text-4xl italic">
-              {tooManyReq
+              {form.message.length === 0
                 ? "Too many requests. Please wait."
                 : ""}
             </h1>
