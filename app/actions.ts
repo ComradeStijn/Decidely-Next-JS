@@ -47,7 +47,6 @@ export async function postForm(prevState: State, formData: FormData) {
     });
 
     const data: LoginResponseBody = await response.json();
-
     if (!data.success) {
       return {
         errors: {

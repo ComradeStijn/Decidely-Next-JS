@@ -1,9 +1,8 @@
 "use server";
+import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import z from "zod";
-import jwt from "jsonwebtoken";
-import { redirect } from "next/navigation";
-import { DecodedToken } from "../booth/page";
+
 
 export type State = {
   message?: string,
@@ -16,6 +15,11 @@ type ProxyResponseBody = {
   success: boolean;
   message: number | string;
 };
+
+type VoteResponseBody = {
+  success: boolean;
+  message: string
+}
 
 export async function voteOnForm(prevState: State, formData: FormData) {
   const formId = formData.get("formId");
@@ -62,6 +66,23 @@ export async function voteOnForm(prevState: State, formData: FormData) {
       },
     };
   }
+
+  try {
+    const response = await fetch(`https://decidely-api.onrender.com/forms/${formId}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${authToken?.value}`,
+        "Content-Type": "application/json"
+      }
+    })
+    const data: VoteResponseBody = await response.json();
+    console.log(data)
+
+  } catch (e) {
+    throw new Error(`Network error: ${e}`)
+  }
+
+  revalidatePath("/dashboard")
 
   return {};
 }
