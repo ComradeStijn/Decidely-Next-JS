@@ -9,7 +9,7 @@ export default async function Page() {
   const isLoggedIn = cookie.has('auth_token')
 
   if (isLoggedIn) {
-    redirect('/test')
+    redirect('/booth')
   }
 
   return (
