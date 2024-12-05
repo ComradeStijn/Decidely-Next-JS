@@ -67,7 +67,12 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
       </thead>
       <tbody>
         {fetchBody.message.map((form) => {
-          const maxVotes = Math.max(...form.decisions.map(decision => decision.votes));
+          let maxVotes = Math.max(
+            ...form.decisions.map((decision) => decision.votes),
+          );
+          if (maxVotes === 0) {
+            maxVotes = 9999;
+          }
 
           return (
             <React.Fragment key={form.id}>
@@ -78,19 +83,27 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
                 >
                   {form.title}
                 </td>
-                <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}>
+                <td
+                  className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}
+                >
                   {form.decisions[0].title}
                 </td>
-                <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}>
+                <td
+                  className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}
+                >
                   {form.decisions[0].votes}
                 </td>
               </tr>
               {form.decisions.slice(1).map((decision) => (
                 <tr key={decision.id}>
-                  <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}>
+                  <td
+                    className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}
+                  >
                     {decision.title}
                   </td>
-                  <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}>
+                  <td
+                    className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}
+                  >
                     {decision.votes}
                   </td>
                 </tr>
