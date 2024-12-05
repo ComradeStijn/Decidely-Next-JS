@@ -10,7 +10,7 @@ export default function RefreshForm() {
   async function clickHandler() {
     setIsDisabled(true);  
     await refreshForm()
-    setTimeout(() => setIsDisabled(false), 5000)
+    setTimeout(() => setIsDisabled(false), 2000)
   }
 
   return (
