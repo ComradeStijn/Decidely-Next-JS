@@ -23,7 +23,7 @@ type VoteResponseBody = {
 // VoteForm.tsx
 export async function voteOnForm(prevState: State, formData: FormData) {
   const formId = formData.get("formId");
-  const formattedData: { decision: string, amount: number }[] = [];
+  const formattedData: { decision: string; amount: number }[] = [];
 
   const authToken = (await cookies()).get("auth_token");
 
@@ -45,9 +45,9 @@ export async function voteOnForm(prevState: State, formData: FormData) {
       return {
         message: "Failure",
         errors: {
-          amount: parsedProxyFetch.message as string
-        }
-      }
+          amount: parsedProxyFetch.message as string,
+        },
+      };
     }
   } catch (e) {
     throw new Error(`Network error: ${e}`);
@@ -57,7 +57,7 @@ export async function voteOnForm(prevState: State, formData: FormData) {
     if (!key.startsWith("$") && key !== "formId") {
       formattedData.push({
         decision: key,
-        amount: isNaN(Number(value)) ? 0 : Number(value)
+        amount: isNaN(Number(value)) ? 0 : Number(value),
       });
     }
   }
@@ -68,8 +68,8 @@ export async function voteOnForm(prevState: State, formData: FormData) {
   }
 
   const castedVoteAmount = parsedData.data.reduce((acc, cur) => {
-    return acc + cur.amount
-  }, 0)
+    return acc + cur.amount;
+  }, 0);
   if (castedVoteAmount !== parsedProxyFetch.message) {
     return {
       message: "Failure",
@@ -80,21 +80,25 @@ export async function voteOnForm(prevState: State, formData: FormData) {
   }
 
   try {
-    const response = await fetch(`https://decidely-api.onrender.com/forms/${formId}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": `Bearer ${authToken?.value}`,
-        "Content-Type": "application/json"
+    const response = await fetch(
+      `https://decidely-api.onrender.com/forms/${formId}`,
+      {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${authToken?.value}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          decisions: parsedData.data,
+        }),
       },
-      body:  JSON.stringify({
-        decisions: parsedData.data
-      })
-    })
+    );
     const data: VoteResponseBody = await response.json();
-    console.log("Response: ", data)
-
+    if (!data.success) {
+      throw new Error(`Fetch error: ${data.message}`);
+    }
   } catch (e) {
-    throw new Error(`Network error: ${e}`)
+    throw new Error(`Network error: ${e}`);
   }
 
   revalidatePath("/dashboard");
@@ -103,13 +107,16 @@ export async function voteOnForm(prevState: State, formData: FormData) {
 
 const DecisionSchema = z.object({
   decision: z.string(),
-  amount: z.number()
-})
-const DecisionArraySchema = z.array(DecisionSchema)
-
-
+  amount: z.number(),
+});
+const DecisionArraySchema = z.array(DecisionSchema);
 
 // RefreshForm.tsx
 export async function refreshForm() {
-  revalidatePath('/dashboard')
+  revalidatePath("/dashboard");
+}
+
+export async function logout() {
+  const cookie = await cookies();
+  cookie.delete("auth_token");
 }

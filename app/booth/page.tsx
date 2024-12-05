@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import RedirectPage from "../components/RedirectPage";
 import VoteForms from "../components/VoteForms";
 import RefreshForm from "../components/RefreshForm";
+import LogoutButton from "../components/LogoutButton";
 
 export type DecodedToken = {
   sub: string;
@@ -63,11 +64,10 @@ export default async function Page() {
       },
     });
     forms = await fetchForms.json();
-    console.log(forms);
+    
     if (forms.error?.includes("Too many requests")) {
       tooManyReq = true;
     }
-    // { error: 'Too many requests, please try again later.' }
 
     const fetchProxy = await fetch(
       "https://decidely-api.onrender.com/forms/proxy",
@@ -90,7 +90,10 @@ export default async function Page() {
         <h1 className="text-center text-3xl lg:text-7xl">
           Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
         </h1>
-        <RefreshForm />
+        <div className="flex my-3 flex-col gap-5">
+          <RefreshForm />
+          <LogoutButton />
+        </div>
       </div>
       {!Array.isArray(forms.message) ? (
         <div>
