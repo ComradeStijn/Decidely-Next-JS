@@ -66,42 +66,46 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
         </tr>
       </thead>
       <tbody>
-        {fetchBody.message.map((form) => (
-          <React.Fragment key={form.id}>
-            <tr>
-              <td
-                rowSpan={form.decisions.length + 1}
-                className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-center text-lg font-semibold"
-              >
-                {form.title}
-              </td>
-              <td className="border-b border-b-gray-200 bg-gray-100 p-2">
-                {form.decisions[0].title}
-              </td>
-              <td className="border-b border-b-gray-200 bg-gray-100 p-2">
-                {form.decisions[0].votes}
-              </td>
-            </tr>
-            {form.decisions.slice(1).map((decision) => (
-              <tr key={decision.id}>
-                <td className="border-b border-b-gray-200 bg-gray-100 p-2">
-                  {decision.title}
+        {fetchBody.message.map((form) => {
+          const maxVotes = Math.max(...form.decisions.map(decision => decision.votes));
+
+          return (
+            <React.Fragment key={form.id}>
+              <tr>
+                <td
+                  rowSpan={form.decisions.length + 1}
+                  className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-center text-lg font-semibold"
+                >
+                  {form.title}
                 </td>
-                <td className="border-b border-b-gray-200 bg-gray-100 p-2">
-                  {decision.votes}
+                <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}>
+                  {form.decisions[0].title}
+                </td>
+                <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}>
+                  {form.decisions[0].votes}
                 </td>
               </tr>
-            ))}
-            <tr>
-              <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-right font-semibold">
-                Total votes:
-              </td>
-              <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-sm font-semibold">
-                {form.decisions.reduce((acc, curr) => acc + curr.votes, 0)}
-              </td>
-            </tr>
-          </React.Fragment>
-        ))}
+              {form.decisions.slice(1).map((decision) => (
+                <tr key={decision.id}>
+                  <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}>
+                    {decision.title}
+                  </td>
+                  <td className={`border-b border-b-gray-200 bg-gray-100 p-2 ${decision.votes === maxVotes ? "font-bold" : ""}`}>
+                    {decision.votes}
+                  </td>
+                </tr>
+              ))}
+              <tr>
+                <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-right font-semibold">
+                  Total votes:
+                </td>
+                <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-sm font-semibold">
+                  {form.decisions.reduce((acc, curr) => acc + curr.votes, 0)}
+                </td>
+              </tr>
+            </React.Fragment>
+          );
+        })}
       </tbody>
     </table>
   );

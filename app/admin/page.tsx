@@ -7,8 +7,6 @@ import { Suspense } from "react";
 import FormTable from "./components/FormTable";
 import FormTableFallback from "./components/FormTableFallback";
 
-
-
 export default async function Page() {
   const cookie = await cookies();
   const token = cookie.get("auth_token");
@@ -26,9 +24,14 @@ export default async function Page() {
     <div className="w-[22rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem]">
       <header>
         <div className="mb-5 flex flex-col items-center justify-between md:mb-10 md:flex-row">
-          <h1 className="text-center text-3xl text-gray-800 lg:text-5xl">
-            Admin Panel
-          </h1>
+          <div>
+            <h1 className="text-center text-3xl text-gray-800 lg:text-5xl">
+              Admin Panel
+            </h1>
+            <p className="text-center text-gray-700 md:text-left">
+              Updated at: {new Date().toLocaleString("en-uk")}
+            </p>
+          </div>
           <div className="my-3 flex flex-col gap-5">
             <LogoutButton />
           </div>
@@ -37,7 +40,7 @@ export default async function Page() {
 
       <main className="rounded-lg p-4">
         <Suspense fallback={<FormTableFallback />}>
-          <FormTable token={token}  />
+          <FormTable token={token} />
         </Suspense>
       </main>
     </div>
