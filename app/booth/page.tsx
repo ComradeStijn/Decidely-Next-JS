@@ -87,9 +87,12 @@ export default async function Page() {
   return (
     <div className="w-[18rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem]">
       <div className="mb-5 flex flex-col items-center justify-between md:mb-10 md:flex-row">
-        <h1 className="text-center text-3xl lg:text-7xl">
-          Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
-        </h1>
+        <div>
+          <h1 className="text-center text-3xl lg:text-7xl">
+            Welcome <strong>{decodedToken.name.split("_").join(" ")}</strong>
+          </h1>
+          <p className="text-gray-700 text-center md:text-left">Updated at: {(new Date()).toLocaleString("en-uk")}</p>
+        </div>
         <div className="flex my-3 flex-col gap-5">
           <RefreshForm />
           <LogoutButton />
