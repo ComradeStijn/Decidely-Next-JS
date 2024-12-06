@@ -7,7 +7,7 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="w-[22rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem] flex flex-col">
+    <div className="w-[22rem] md:w-[40rem] lg:w-[60rem] lg:p-6 xl:w-[80rem] flex flex-col gap-4">
       <header>
         <div className="mb-5 flex flex-col items-center justify-between md:mb-10 md:flex-row">
           <div>
