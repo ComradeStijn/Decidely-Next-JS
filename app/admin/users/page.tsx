@@ -5,6 +5,7 @@ import RedirectPage from "@/app/components/RedirectPage";
 import { DecodedToken } from "@/app/booth/page";
 import { Suspense } from "react";
 import UserTable from "./components/UserTable";
+import UserTableFallback from "./components/UserTableFallback";
 
 export default async function Page() {  
   const cookie = await cookies();
@@ -26,7 +27,7 @@ export default async function Page() {
 
   return (
     <main className="rounded-lg p-4">
-      <Suspense>
+      <Suspense fallback={<UserTableFallback />}>
         <UserTable token={token} />
       </Suspense>
     </main>

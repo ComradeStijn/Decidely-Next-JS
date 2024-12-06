@@ -2,12 +2,8 @@ import { MoonLoader } from "react-spinners";
 
 export default async function FormTableFallback() {
   return (
-    <table className="w-full table-auto text-left font-mono text-gray-700 brightness-75 shadow-lg">
+    <table className="w-full table-auto text-left text-gray-700 brightness-75 shadow-lg">
       <caption className="mb-2 text-xl font-semibold">Current results</caption>
-      <colgroup>
-        <col />
-        <col />
-      </colgroup>
       <thead>
         <tr>
           <th className="rounded-tl-lg border-b-4 border-b-gray-300 bg-gray-200 p-2 text-center font-sans">
