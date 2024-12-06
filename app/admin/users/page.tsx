@@ -6,6 +6,7 @@ import { DecodedToken } from "@/app/booth/page";
 import { Suspense } from "react";
 import UserTable from "./components/UserTable";
 import UserTableFallback from "./components/UserTableFallback";
+import Create from "./components/Create";
 
 export default async function Page() {  
   const cookie = await cookies();
@@ -27,6 +28,7 @@ export default async function Page() {
 
   return (
     <main className="rounded-lg p-4">
+      <Create />
       <Suspense fallback={<UserTableFallback />}>
         <UserTable token={token} />
       </Suspense>

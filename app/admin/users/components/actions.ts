@@ -1,6 +1,7 @@
 "use server";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 type ResponseBody = {
   success: boolean;
@@ -92,3 +93,58 @@ export async function changeProxy(userId: string, newAmount: number) {
     message: "",
   };
 }
+
+export async function createGroup(
+  prevState: CreateGroupState,
+  formData: FormData,
+) {
+  const groupName = formData.get("groupName");
+  const authToken = (await cookies()).get("auth_token");
+
+
+  let createGroupFetch: CreateGroupBody;
+  try {
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/groups",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+        body: JSON.stringify({ groupName: groupName }),
+      },
+    );
+    createGroupFetch = await response.json();
+
+    if (!createGroupFetch.success) {
+      return {
+        success: false,
+        message: "Error creating group. Please check unique groupname",
+      };
+    }
+  } catch (e) {
+    throw new Error(`Network Error: ${e}`);
+  }
+  redirect("/admin/users")
+
+  return {
+    success: true,
+    message: "",
+  };
+}
+
+type CreateGroupBody = {
+  success: boolean;
+  message:
+    | string
+    | {
+        name: string;
+        id: string;
+      };
+};
+
+export type CreateGroupState = {
+  success: boolean;
+  message: string;
+};
