@@ -42,20 +42,26 @@ export default async function UserTable({ token }: { token: RequestCookie }) {
     );
     fetchBody = await result.json();
     if (!fetchBody.success || typeof fetchBody.message === "string") {
-      throw new Error(`Fetch Failed: ${fetchBody.message}`)
+      throw new Error(`Fetch Failed: ${fetchBody.message}`);
     }
   } catch (e) {
     throw new Error(`Network error: ${e}`);
   }
 
-
   if (typeof fetchBody.message === "string") {
     throw new Error("Shouldnt see");
   }
 
+  const sortedMessage = fetchBody.message
+    .map((group) => ({
+      ...group,
+      users: group.users.sort((a, b) => a.name.localeCompare(b.name)),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
   return (
     <div className="overflow-x-auto">
-      <table className="w-full table-fixed text-left text-gray-700 shadow-lg">
+      <table className="w-full table-auto text-left text-gray-700 shadow-lg md:table-fixed">
         <caption className="mb-2 text-xl font-semibold">Users</caption>
         <thead>
           <tr>
@@ -71,14 +77,14 @@ export default async function UserTable({ token }: { token: RequestCookie }) {
             <th className="border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
               Token
             </th>
-            <th className="border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
+            <th className="w-16 border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
               Proxies
             </th>
-            <th className="rounded-tr-lg border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans"></th>
+            <th className="w-32 rounded-tr-lg border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans"></th>
           </tr>
         </thead>
         <tbody>
-          {fetchBody.message.map((group) =>
+          {sortedMessage.map((group) =>
             group.users.map((user) => (
               <UserItem user={user} group={group} key={user.id} />
             )),

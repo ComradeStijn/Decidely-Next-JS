@@ -28,7 +28,7 @@ export default function DeleteModal({
   return (
     <div
       onClick={closeModalAction}
-      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50"
     >
       <div
         onClick={(e) => e.stopPropagation()}

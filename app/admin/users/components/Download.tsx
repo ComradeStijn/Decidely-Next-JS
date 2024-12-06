@@ -31,7 +31,7 @@ export default function Download({ fetchBody }: { fetchBody: FetchBody }) {
   return (
     <CSVLink
       data={flattenedData}
-      filename="FormResult.csv"
+      filename="UserResult.csv"
       className="mt-6 flex w-max items-center justify-center gap-2 rounded-2xl bg-blue-600 px-4 py-1 text-sm text-gray-100"
     >
       Download

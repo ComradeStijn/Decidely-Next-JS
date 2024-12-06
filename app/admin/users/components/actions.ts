@@ -2,12 +2,12 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
-type DeleteResponseBody = {
+type ResponseBody = {
   success: boolean;
-  message: string | DeletedUser
-}
+  message: string | User;
+};
 
-type DeletedUser = {
+type User = {
   name: string;
   id: string;
   email: string | null;
@@ -17,12 +17,12 @@ type DeletedUser = {
   updatedAt: Date;
   proxyAmount: number;
   userGroupId: string | null;
-}
+};
 
 export async function deleteUser(userId: string) {
   const authToken = (await cookies()).get("auth_token");
 
-  let parsedDeleteFetch: DeleteResponseBody
+  let parsedDeleteFetch: ResponseBody;
   try {
     const response = await fetch(
       "https://decidely-api.onrender.com/admin/users",
@@ -32,7 +32,7 @@ export async function deleteUser(userId: string) {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken?.value}`,
         },
-        body: JSON.stringify({userId: userId})
+        body: JSON.stringify({ userId: userId }),
       },
     );
     parsedDeleteFetch = await response.json();
@@ -40,17 +40,55 @@ export async function deleteUser(userId: string) {
     if (!parsedDeleteFetch.success) {
       return {
         error: true,
-        message: parsedDeleteFetch.message as string
-      }
+        message: parsedDeleteFetch.message as string,
+      };
     }
   } catch (e) {
     throw new Error(`Network error: ${e}`);
   }
 
-
-  revalidatePath("/admin/users")
+  revalidatePath("/admin/users");
   return {
     error: false,
-    message: ""
+    message: "",
+  };
+}
+
+export async function changeProxy(userId: string, newAmount: number) {
+  const authToken = (await cookies()).get("auth_token");
+
+  if (newAmount < 1 || newAmount > 5 || typeof newAmount !== "number") {
+    throw new Error("New proxyAmount is not between 1 and 5");
   }
+
+  let parsedModifyFetch: ResponseBody;
+  try {
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/users/proxy",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+        body: JSON.stringify({ userId: userId, newAmount: newAmount }),
+      },
+    );
+    parsedModifyFetch = await response.json();
+
+    if (!parsedModifyFetch.success) {
+      return {
+        error: true,
+        message: parsedModifyFetch.message as string,
+      };
+    }
+  } catch (e) {
+    throw new Error(`Network error: ${e}`);
+  }
+
+  revalidatePath("/admin/users");
+  return {
+    error: false,
+    message: "",
+  };
 }
