@@ -48,7 +48,7 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
 
   return (
     <div>
-      <table className="w-full table-auto text-left font-mono text-gray-700 shadow-lg">
+      <table className="w-full table-auto text-left text-gray-700 shadow-lg">
         <caption className="mb-2 text-xl font-semibold">
           Current results
         </caption>
