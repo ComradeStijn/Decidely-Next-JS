@@ -12,6 +12,8 @@ export default function CreateUserModal({
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState(null as null | string);
   const [groups, setGroups] = useState([] as Group[]);
+  const [email, setEmail] = useState("");
+  const [proxy, setProxy] = useState("1");
   const [name, setName] = useState({
     firstName: "",
     lastName: "",
@@ -42,6 +44,14 @@ export default function CreateUserModal({
     username = `${name.firstName}_${name.lastName}`;
   }
 
+  useEffect(() => {
+    if (state.success) {
+      setName({ firstName: "", lastName: "" });
+      setProxy("1");
+      setEmail("");
+    }
+  }, [state]);
+
   return (
     <div
       onClick={closeModalAction}
@@ -67,18 +77,28 @@ export default function CreateUserModal({
           <>
             {!state.success && (
               <p className="mb-1 rounded bg-red-100 p-1 text-red-800">
-                {state.message}
+                {state.message as string}
               </p>
             )}
-            <form action={formAction} className="flex mt-6 flex-col gap-1">
-              <label className="font-semibold text-gray-700" htmlFor="group">
+            {error && (
+              <p className="mb-1 rounded bg-red-100 p-1 text-red-800">
+                {error as string}
+              </p>
+            )}
+            {state.success && state.message && (
+              <p className="mb-1 rounded bg-green-100 p-1 text-green-800">
+                {state.message as string}
+              </p>
+            )}
+            <form action={formAction} className="mt-6 flex flex-col gap-1">
+              <label className="font-semibold text-gray-700" htmlFor="groupId">
                 Group Name
               </label>
               <select
-                name="group"
-                id="group"
+                name="groupId"
+                id="groupId"
                 required
-                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                className="mb-4 w-full rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
               >
                 {groups.map((group) => (
                   <option
@@ -91,15 +111,19 @@ export default function CreateUserModal({
                 ))}
               </select>
 
-              <label className="font-semibold text-gray-700" htmlFor="username">
+              <label
+                className="font-semibold text-gray-700"
+                htmlFor="usernName"
+              >
                 Username
               </label>
               <input
                 type="text"
-                id="username"
-                name="username"
+                id="userName"
+                name="userName"
                 value={username}
                 readOnly
+                placeholder="John_Smith"
                 className="rounded bg-gray-300 px-2 py-1 font-mono text-gray-700 outline outline-gray-300"
               />
 
@@ -113,6 +137,7 @@ export default function CreateUserModal({
                 required
                 id="firstName"
                 name="firstName"
+                placeholder="John"
                 type="text"
                 value={name.firstName}
                 className="rounded bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
@@ -136,9 +161,10 @@ export default function CreateUserModal({
                 required
                 id="lastName"
                 name="lastName"
+                placeholder="Smith"
                 type="text"
                 value={name.lastName}
-                className="rounded mb-4 bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                className="mb-4 rounded bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.preventDefault();
@@ -159,10 +185,12 @@ export default function CreateUserModal({
                 Proxies
               </label>
               <select
-                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                className="mb-4 w-full rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 required
                 name="proxyAmount"
                 id="proxyAmount"
+                value={proxy}
+                onChange={(e) => setProxy(e.target.value)}
               >
                 <option className="text-gray-700" value="1">
                   1
@@ -181,25 +209,30 @@ export default function CreateUserModal({
                 </option>
               </select>
 
-              <label className="font-semibold text-gray-700" htmlFor="">
+              <label className="font-semibold text-gray-700" htmlFor="email">
                 Email
               </label>
               <input
                 required
-                className="rounded mb-4 bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mb-4 rounded bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.preventDefault();
                   }
                 }}
                 type="email"
+                id="email"
+                name="email"
+                placeholder="John@smith.org"
               />
 
-              <label className="font-semibold text-gray-700" htmlFor="">
+              <label className="font-semibold text-gray-700" htmlFor="role">
                 Role
               </label>
               <select
-                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                className="mb-4 w-full rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 required
                 name="role"
                 id="role"

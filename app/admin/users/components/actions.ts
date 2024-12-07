@@ -2,6 +2,7 @@
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import z from "zod";
 
 type UserResponseBody = {
   success: boolean;
@@ -165,10 +166,7 @@ export async function changeProxy(userId: string, newAmount: number) {
   };
 }
 
-export async function createGroup(
-  prevState: CreateState,
-  formData: FormData,
-) {
+export async function createGroup(prevState: CreateState, formData: FormData) {
   const groupName = formData.get("groupName");
   const authToken = (await cookies()).get("auth_token");
 
@@ -242,11 +240,59 @@ export async function fetchGroups() {
 export async function createUser(prevState: CreateState, formData: FormData) {
   const authToken = (await cookies()).get("auth_token");
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  const formattedData = {
+    userGroupId: formData.get("groupId"),
+    userName: formData.get("userName"),
+    amount: formData.get("proxyAmount"),
+    role: formData.get("role"),
+    email: formData.get("email"),
+  };
 
-  console.log(formData)
-  return {
-    success: false,
-    message: "Test error"
+  const parsedData = CreateUserSchema.safeParse(formattedData);
+
+  if (!parsedData.success) {
+    return {
+      success: false,
+      message: parsedData.error.errors
+        .map((error) => `${error.message}`)
+        .join(", "),
+    };
   }
+
+  let responseBody: UserResponseBody;
+  try {
+    const response = await fetch("https://decidely-api.onrender.com/admin/users", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken?.value}`
+      },
+      body: JSON.stringify(parsedData.data)
+    })
+    responseBody = await response.json()
+
+    if (!responseBody.success || typeof responseBody.message === "string") {
+      return {
+        success: false,
+        message: "Failed to create user. Make sure user does not yet exist."
+      }
+    }
+
+  } catch (e) {
+    throw new Error(`Network error: ${e}`)
+  }
+
+  revalidatePath("/admin/users")
+  return {
+    success: true,
+    message: "User created succesfully.",
+  };
 }
+
+const CreateUserSchema = z.object({
+  userGroupId: z.string(),
+  userName: z.string().trim(),
+  amount: z.coerce.number().int().min(1).max(5),
+  email: z.string().email(),
+  role: z.enum(["user", "admin"]),
+});
