@@ -242,9 +242,11 @@ export async function fetchGroups() {
 export async function createUser(prevState: CreateState, formData: FormData) {
   const authToken = (await cookies()).get("auth_token");
 
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
   console.log(formData)
   return {
-    success: true,
-    message: ""
+    success: false,
+    message: "Test error"
   }
 }

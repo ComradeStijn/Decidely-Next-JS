@@ -58,18 +58,34 @@ export default function CreateUserModal({
             Fetching groups...
           </div>
         ) : isPending ? (
-          <div>Pending</div>
+          <div className="my-6 flex items-center justify-center">
+            <MoonLoader />
+          </div>
         ) : groups.length === 0 ? (
           <h1>Create a group first.</h1>
         ) : (
           <>
-            <form action={formAction} className="flex flex-col gap-1">
+            {!state.success && (
+              <p className="mb-1 rounded bg-red-100 p-1 text-red-800">
+                {state.message}
+              </p>
+            )}
+            <form action={formAction} className="flex mt-6 flex-col gap-1">
               <label className="font-semibold text-gray-700" htmlFor="group">
-                Group Name:
+                Group Name
               </label>
-              <select name="group" id="group">
+              <select
+                name="group"
+                id="group"
+                required
+                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+              >
                 {groups.map((group) => (
-                  <option key={group.id} value={group.id}>
+                  <option
+                    key={group.id}
+                    value={group.id}
+                    className="text-gray-700"
+                  >
                     {group.name}
                   </option>
                 ))}
@@ -84,6 +100,7 @@ export default function CreateUserModal({
                 name="username"
                 value={username}
                 readOnly
+                className="rounded bg-gray-300 px-2 py-1 font-mono text-gray-700 outline outline-gray-300"
               />
 
               <label
@@ -93,10 +110,12 @@ export default function CreateUserModal({
                 First Name
               </label>
               <input
+                required
                 id="firstName"
                 name="firstName"
                 type="text"
                 value={name.firstName}
+                className="rounded bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.preventDefault();
@@ -110,14 +129,16 @@ export default function CreateUserModal({
                 }
               />
 
-              <label className="font-semibold text-gray-700" htmlFor="">
+              <label className="font-semibold text-gray-700" htmlFor="lastName">
                 Last Name
               </label>
               <input
+                required
                 id="lastName"
                 name="lastName"
                 type="text"
                 value={name.lastName}
+                className="rounded mb-4 bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.preventDefault();
@@ -137,18 +158,35 @@ export default function CreateUserModal({
               >
                 Proxies
               </label>
-              <select name="proxyAmount" id="proxyAmount">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
+              <select
+                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                required
+                name="proxyAmount"
+                id="proxyAmount"
+              >
+                <option className="text-gray-700" value="1">
+                  1
+                </option>
+                <option className="text-gray-700" value="2">
+                  2
+                </option>
+                <option className="text-gray-700" value="3">
+                  3
+                </option>
+                <option className="text-gray-700" value="4">
+                  4
+                </option>
+                <option className="text-gray-700" value="5">
+                  5
+                </option>
               </select>
 
               <label className="font-semibold text-gray-700" htmlFor="">
                 Email
               </label>
               <input
+                required
+                className="rounded mb-4 bg-gray-100 px-2 py-1 font-semibold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
                 onKeyDown={(e) => {
                   if (e.key === " ") {
                     e.preventDefault();
@@ -160,9 +198,18 @@ export default function CreateUserModal({
               <label className="font-semibold text-gray-700" htmlFor="">
                 Role
               </label>
-              <select name="role" id="role">
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
+              <select
+                className="w-full mb-4 rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
+                required
+                name="role"
+                id="role"
+              >
+                <option className="text-gray-700" value="user">
+                  User
+                </option>
+                <option className="text-gray-700" value="admin">
+                  Admin
+                </option>
               </select>
 
               <button className="mt-4 rounded bg-blue-500 px-4 py-1 font-extrabold text-white hover:bg-white hover:text-blue-500 hover:outline hover:outline-blue-500">
