@@ -6,6 +6,7 @@ import { Suspense } from "react";
 import FormTable from "./components/FormTable";
 import FormTableFallback from "./components/FormTableFallback";
 import RedirectPage from "../components/RedirectPage";
+import ButtonsForms from "./components/ButtonsForms";
 
 export default async function Page() {
   const cookie = await cookies();
@@ -27,6 +28,7 @@ export default async function Page() {
 
   return (
     <main className="rounded-lg p-4">
+      <ButtonsForms />
       <Suspense fallback={<FormTableFallback />}>
         <FormTable token={token} />
       </Suspense>

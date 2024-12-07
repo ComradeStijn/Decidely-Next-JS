@@ -248,7 +248,7 @@ export async function createUser(prevState: CreateState, formData: FormData) {
     email: formData.get("email"),
   };
 
-  const parsedData = CreateUserSchema.safeParse(formattedData);
+  const parsedData = createUserSchema.safeParse(formattedData);
 
   if (!parsedData.success) {
     return {
@@ -289,7 +289,7 @@ export async function createUser(prevState: CreateState, formData: FormData) {
   };
 }
 
-const CreateUserSchema = z.object({
+const createUserSchema = z.object({
   userGroupId: z.string(),
   userName: z.string().trim(),
   amount: z.coerce.number().int().min(1).max(5),
