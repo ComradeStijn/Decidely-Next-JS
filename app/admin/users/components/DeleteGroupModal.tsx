@@ -37,6 +37,8 @@ export default function DeleteGroupModal({
     const response = await deleteGroup(selectedGroup)
     if (response.error) {
       setError(response.message)
+    } else {
+      closeModalAction()
     }
 
     setRefetch((prev) => !prev)
