@@ -12,6 +12,7 @@ export default function CreateUserModal({
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState(null as null | string);
   const [groups, setGroups] = useState([] as Group[]);
+  const [selectedGroup, setSelectedGroup] = useState("")
   const [email, setEmail] = useState("");
   const [proxy, setProxy] = useState("1");
   const [name, setName] = useState({
@@ -105,6 +106,8 @@ export default function CreateUserModal({
               <select
                 name="groupId"
                 id="groupId"
+                value={selectedGroup}
+                onChange={(e) => setSelectedGroup(e.target.value)}
                 required
                 className="mb-4 w-full rounded bg-gray-100 p-2 font-bold text-gray-700 outline outline-gray-300 focus:outline-4 focus:outline-slate-700"
               >
