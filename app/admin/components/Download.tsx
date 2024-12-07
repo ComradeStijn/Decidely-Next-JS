@@ -1,12 +1,12 @@
 "use client";
 
 import { CSVLink } from "react-csv";
-import { FetchBody, Form } from "./FormTable";
+import { FetchFormBody, Form } from "./FormTable";
 import Image from "next/image";
 import icon from "@/public/csv.svg";
 import { useEffect, useState } from "react";
 
-export default function Download({ fetchBody }: { fetchBody: FetchBody }) {
+export default function Download({ fetchBody }: { fetchBody: FetchFormBody }) {
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
