@@ -72,7 +72,7 @@ export async function deleteUser(userId: string) {
     if (!parsedDeleteFetch.success) {
       return {
         error: true,
-        message: parsedDeleteFetch.message as string,
+        message: "Could not delete user. User might already not exist anymore.",
       };
     }
   } catch (e) {

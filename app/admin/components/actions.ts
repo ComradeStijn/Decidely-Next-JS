@@ -35,7 +35,7 @@ export async function createForm(prevState: CreateState, formData: FormData) {
     decisions: [],
   };
 
-  for (let [key, value] of formData.entries()) {
+  for (const [key, value] of formData.entries()) {
     if (key.startsWith("decision") && value !== "") {
       formattedData.decisions.push(value as string);
     }
@@ -87,3 +87,35 @@ const createFormSchema = z.object({
   title: z.string().trim(),
   decisions: z.array(z.string()),
 });
+
+export async function deleteForm(formId: string) {
+  const authToken = (await cookies()).get("auth_token")
+
+  let deleteFetch: FormResponseBody;
+  try {
+    const response = await fetch("https://decidely-api.onrender.com/admin/forms", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken?.value}`
+      },
+      body: JSON.stringify({formId: formId})
+    })
+    deleteFetch = await response.json()
+
+    if (!deleteFetch.success) {
+      return {
+        error: true,
+        message: "Could not delete form. Form might already have been deleted."
+      }
+    }
+  } catch (e) {
+    throw new Error(`Network error: ${e}`)
+  }
+
+  revalidatePath("/admin")
+  return {
+    error: false,
+    message: ""
+  }
+}

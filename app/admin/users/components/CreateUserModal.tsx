@@ -12,7 +12,7 @@ export default function CreateUserModal({
   const [isFetching, setIsFetching] = useState(true);
   const [error, setError] = useState(null as null | string);
   const [groups, setGroups] = useState([] as Group[]);
-  const [selectedGroup, setSelectedGroup] = useState("")
+  const [selectedGroup, setSelectedGroup] = useState("");
   const [email, setEmail] = useState("");
   const [proxy, setProxy] = useState("1");
   const [name, setName] = useState({

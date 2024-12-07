@@ -1,6 +1,7 @@
 import { RequestCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import React from "react";
 import Download from "./Download";
+import DeleteForm from "./DeleteFormButton";
 
 export type Decision = {
   id: string;
@@ -64,9 +65,10 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
                 <th className="border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
                   Decisions
                 </th>
-                <th className="rounded-tr-lg border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
+                <th className="border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans">
                   Votes
                 </th>
+                <th className="w-32 rounded-tr-lg border-b-4 border-b-gray-300 bg-gray-200 p-2 font-sans"></th>
               </tr>
             </thead>
             <tbody>
@@ -108,6 +110,12 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
                         className={`border-b border-b-gray-200 bg-gray-100 p-2 ${form.decisions[0].votes === maxVotes ? "font-bold" : ""}`}
                       >
                         {form.decisions[0].votes}
+                      </td>
+                      <td
+                        rowSpan={form.decisions.length + 1}
+                        className="w-fit border-b-4 border-b-gray-300 bg-gray-100 p-2 text-center font-semibold"
+                      >
+                        <DeleteForm formId={form.id} />
                       </td>
                     </tr>
                     {form.decisions.slice(1).map((decision) => (
