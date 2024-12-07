@@ -61,7 +61,15 @@ export default function CreateUserModal({
         onClick={(e) => e.stopPropagation()}
         className="w-96 rounded-xl bg-white p-4"
       >
-        <h1 className="mb-3 text-3xl font-bold">Create User</h1>
+        <header className="mb-3 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">Create User</h1>
+          <button
+            onClick={closeModalAction}
+            className="text-xl font-bold text-gray-700"
+          >
+            X
+          </button>
+        </header>
         {isFetching ? (
           <div className="flex flex-col items-center justify-center">
             <MoonLoader />
