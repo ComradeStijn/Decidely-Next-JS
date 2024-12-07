@@ -10,7 +10,7 @@ export default function NavBar() {
       <button
         className={`rounded px-4 py-1 font-semibold ${pathname === "/admin" ? "text-lg text-gray-700 underline underline-offset-4" : "text-gray-400 transition-transform hover:scale-110 hover:text-gray-700"}`}
       >
-        <Link href="/admin">Results</Link>
+        <Link href="/admin">Forms</Link>
       </button>
       <button
         className={`rounded px-4 py-1 font-semibold ${pathname === "/admin/users" ? "text-lg text-gray-700 underline underline-offset-4" : "text-gray-400 transition-transform hover:scale-110 hover:text-gray-700"}`}
