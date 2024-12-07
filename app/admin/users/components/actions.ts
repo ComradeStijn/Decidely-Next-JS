@@ -41,7 +41,7 @@ export type CreateState = {
   message: string;
 };
 
-type FetchGroupsBody = {
+export type FetchGroupsBody = {
   success: boolean;
   message: string | Group[];
 };
@@ -107,7 +107,7 @@ export async function deleteGroup(groupId: string) {
     if (!parsedDeleteGroup.success) {
       return {
         error: true,
-        message: parsedDeleteGroup.message as string,
+        message: "Error deleting group. Group might already have been deleted.",
       };
     }
 
@@ -188,7 +188,7 @@ export async function createGroup(prevState: CreateState, formData: FormData) {
     if (!createGroupFetch.success) {
       return {
         success: false,
-        message: "Error creating group. Please check unique groupname",
+        message: "Error creating group. Group might already exist.",
       };
     }
   } catch (e) {

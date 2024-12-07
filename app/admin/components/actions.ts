@@ -1,9 +1,10 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { CreateState } from "../users/components/actions";
+import { CreateState, FetchGroupsBody } from "../users/components/actions";
 import z from "zod";
 import { revalidatePath } from "next/cache";
+import { FetchFormBody } from "./FormTable";
 
 type FormResponseBody = {
   success: boolean;
@@ -26,6 +27,16 @@ type Form = {
   title: string;
   decisions: Decision[];
 };
+
+type AssignResponseBody = {
+  success: boolean;
+  message: string | GroupForm[]
+}
+
+type GroupForm = {
+  groupId: string,
+  formId: string
+}
 
 export async function createForm(prevState: CreateState, formData: FormData) {
   const authToken = (await cookies()).get("auth_token");
@@ -52,31 +63,33 @@ export async function createForm(prevState: CreateState, formData: FormData) {
     };
   }
 
-  let responseBody: FormResponseBody
+  let responseBody: FormResponseBody;
   try {
-    const response = await fetch("https://decidely-api.onrender.com/admin/forms", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.value}`
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/forms",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+        body: JSON.stringify(parsedData.data),
       },
-      body: JSON.stringify(parsedData.data)
-    })
-    responseBody = await response.json()
+    );
+    responseBody = await response.json();
 
     if (!responseBody.success || typeof responseBody.message === "string") {
       return {
         success: false,
-        message: "Failed to create form. Make sure form title does not yet exist."
-      }
+        message:
+          "Failed to create form. Make sure form title does not yet exist or decisions are unique.",
+      };
     }
   } catch (e) {
-    throw new Error(`Network error: ${e}`)
+    throw new Error(`Network error: ${e}`);
   }
 
-
-
-  revalidatePath("/admin")
+  revalidatePath("/admin");
   return {
     success: true,
     message: "Form created",
@@ -89,33 +102,126 @@ const createFormSchema = z.object({
 });
 
 export async function deleteForm(formId: string) {
-  const authToken = (await cookies()).get("auth_token")
+  const authToken = (await cookies()).get("auth_token");
 
   let deleteFetch: FormResponseBody;
   try {
-    const response = await fetch("https://decidely-api.onrender.com/admin/forms", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.value}`
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/forms",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+        body: JSON.stringify({ formId: formId }),
       },
-      body: JSON.stringify({formId: formId})
-    })
-    deleteFetch = await response.json()
+    );
+    deleteFetch = await response.json();
 
     if (!deleteFetch.success) {
       return {
         error: true,
-        message: "Could not delete form. Form might already have been deleted."
-      }
+        message: "Could not delete form. Form might already have been deleted.",
+      };
     }
   } catch (e) {
-    throw new Error(`Network error: ${e}`)
+    throw new Error(`Network error: ${e}`);
   }
 
-  revalidatePath("/admin")
+  revalidatePath("/admin");
   return {
     error: false,
-    message: ""
+    message: "",
+  };
+}
+
+export async function fetchAssign() {
+  const authToken = (await cookies()).get("auth_token");
+
+  let fetchGroups: FetchGroupsBody;
+  let fetchForms: FetchFormBody;
+
+  try {
+    const responseGroup = await fetch(
+      "https://decidely-api.onrender.com/admin/groups",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+      },
+    );
+    const responseForm = await fetch(
+      "https://decidely-api.onrender.com/admin/forms",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+      },
+    );
+
+    fetchGroups = await responseGroup.json();
+    fetchForms = await responseForm.json();
+
+    if (!fetchGroups.success) {
+      return {
+        error: true,
+        message: "Error fetching groups",
+      };
+    }
+    if (!fetchForms.success) {
+      return {
+        error: true,
+        message: "Error fetching forms",
+      };
+    }
+
+    return {
+      error: false,
+      message: {
+        groups: fetchGroups.message,
+        forms: fetchForms.message,
+      },
+    };
+  } catch (e) {
+    throw new Error(`Network error: ${e}`);
+  }
+}
+
+export async function assignFormToGroup(formId: string, groupId: string) {
+  const authToken = (await cookies()).get("auth_token")
+
+  let assignResponse: AssignResponseBody;
+  try {
+    const response = await fetch("https://decidely-api.onrender.com/admin/groups/assign", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken?.value}`,
+      },
+      body: JSON.stringify({
+        formId: formId,
+        groupId: groupId
+      })
+    })
+    assignResponse = await response.json()
+
+    if (!assignResponse.success) {
+      return {
+        error: true,
+        message: "Error assigning form. Form might already have been assigned"
+      }
+    }
+
+    return {
+      error: false,
+      message: ""
+    }
+  }  catch (e) {
+    throw new Error(`Network error: ${e}`)
   }
 }

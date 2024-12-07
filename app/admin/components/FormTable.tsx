@@ -20,13 +20,13 @@ export type Form = {
   decisions: Decision[];
 };
 
-export type FetchBody = {
+export type FetchFormBody = {
   success: boolean;
   message: Form[] | string;
 };
 
 export default async function FormTable({ token }: { token: RequestCookie }) {
-  let fetchBody: FetchBody;
+  let fetchBody: FetchFormBody;
 
   try {
     const result = await fetch(
