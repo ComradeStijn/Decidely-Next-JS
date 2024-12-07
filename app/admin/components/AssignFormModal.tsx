@@ -15,6 +15,7 @@ export default function AssignFormModal({
   const [groups, setGroups] = useState([] as Group[]);
   const [forms, setForms] = useState([] as Form[]);
   const [error, setError] = useState(null as null | string);
+  const [success, setSuccess] = useState(false)
   const [selectedGroup, setSelectedGroup] = useState("");
   const [selectedForm, setSelectedForm] = useState("");
 
@@ -44,10 +45,13 @@ export default function AssignFormModal({
   async function assignHandler() {
     setIsFetching(true)
     setError(null)
+    setSuccess(false)
     const response = await assignFormToGroup(selectedForm, selectedGroup)
     if (response.error) {
       setError(response.message)
-    } 
+    } else {
+      setSuccess(true)
+    }
 
     setIsFetching(false)
   }
@@ -73,6 +77,9 @@ export default function AssignFormModal({
         </p>
         {error && (
           <h2 className="mb-1 rounded bg-red-100 p-1 text-red-800">{error}</h2>
+        )}
+        {success && (
+          <h2 className="mb-1 rounded bg-green-100 p-1 text-green-800">Success</h2>
         )}
         {isFetching ? (
           <div className="flex flex-col items-center justify-center">

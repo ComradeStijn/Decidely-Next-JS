@@ -73,7 +73,7 @@ export default function VoteForms({
             {decision.title}
           </label>
 
-          <div className="flex gap-4">
+          <div className="flex gap-4 flex-wrap justify-center">
             {choicesNumberArray.map((amount) => (
               <div
                 key={`${decision.id}-${amount}`}
