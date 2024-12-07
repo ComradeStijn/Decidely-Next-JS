@@ -6,7 +6,7 @@ import image from "../../public/undraw_not_found_re_bh2e.svg";
 
 export default function RedirectPage() {
   return (
-    <div className="flex w-72 flex-col items-center space-y-10 lg:w-[50rem]">
+    <div className="flex w-72 flex-col items-center space-y-10 lg:w-[50rem] self-center">
       <Image src={image} alt="Not found"></Image>
       <h1 className="text-center font-mono text-2xl text-blue-700 lg:text-5xl">
         User token has expired. <br />
