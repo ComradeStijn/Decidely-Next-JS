@@ -136,7 +136,7 @@ export default async function FormTable({ token }: { token: RequestCookie }) {
                       <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-right font-semibold">
                         Total votes:
                       </td>
-                      <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 text-sm font-semibold">
+                      <td className="border-b-4 border-b-gray-300 bg-gray-100 p-2 font-extrabold">
                         {form.decisions.reduce(
                           (acc, curr) => acc + curr.votes,
                           0,

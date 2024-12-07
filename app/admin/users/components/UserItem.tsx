@@ -55,16 +55,16 @@ export default function UserItem({
         </tr>
       )}
       <tr>
-        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm">
+        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm ">
           {group.name}
         </td>
-        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm">
+        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm ">
           {user.name}
         </td>
-        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm">
+        <td className="overflow-x-auto border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm ">
           {user.email}
         </td>
-        <td className="overflow-x-auto whitespace-nowrap border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm">
+        <td className="border-x-2 overflow-x-auto text-wrap break-words max-w-[20ch] border-b-2 border-b-gray-300 bg-gray-100 p-2 text-sm">
           {user.token}
         </td>
         <td className="border-b-2 border-b-gray-300 bg-gray-100 p-2">
