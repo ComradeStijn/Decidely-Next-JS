@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
-type ResponseBody = {
+type UserResponseBody = {
   success: boolean;
   message: string | User;
 };
@@ -20,10 +20,15 @@ type User = {
   userGroupId: string | null;
 };
 
+type GroupResponseBody = {
+  success: boolean,
+  message: string | Group | null
+}
+
 export async function deleteUser(userId: string) {
   const authToken = (await cookies()).get("auth_token");
 
-  let parsedDeleteFetch: ResponseBody;
+  let parsedDeleteFetch: UserResponseBody;
   try {
     const response = await fetch(
       "https://decidely-api.onrender.com/admin/users",
@@ -55,6 +60,47 @@ export async function deleteUser(userId: string) {
   };
 }
 
+export async function deleteGroup(groupId: string) {
+  const authToken = (await cookies()).get("auth_token")
+
+  let parsedDeleteGroup: GroupResponseBody;
+  try {
+    const response = await fetch("https://decidely-api.onrender.com/admin/groups", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken?.value}`
+      },
+      body: JSON.stringify({groupId: groupId})
+    })
+    parsedDeleteGroup = await response.json()
+
+    if(!parsedDeleteGroup.success) {
+      return {
+        error: true,
+        message: parsedDeleteGroup.message as string
+      }
+    }
+
+    if (parsedDeleteGroup.message === null) {
+      return {
+        error: true,
+        message: "Cannot delete group. Group contains users."
+      }
+    }
+
+    return {
+      error: false,
+      message: ""
+    }
+
+  } catch (e) {
+    throw new Error(`Network error: ${e}`)
+  }
+
+
+}
+
 export async function changeProxy(userId: string, newAmount: number) {
   const authToken = (await cookies()).get("auth_token");
 
@@ -62,7 +108,7 @@ export async function changeProxy(userId: string, newAmount: number) {
     throw new Error("New proxyAmount is not between 1 and 5");
   }
 
-  let parsedModifyFetch: ResponseBody;
+  let parsedModifyFetch: UserResponseBody;
   try {
     const response = await fetch(
       "https://decidely-api.onrender.com/admin/users/proxy",
@@ -126,6 +172,7 @@ export async function createGroup(
   } catch (e) {
     throw new Error(`Network Error: ${e}`);
   }
+
   redirect("/admin/users")
 
   return {
@@ -148,3 +195,45 @@ export type CreateGroupState = {
   success: boolean;
   message: string;
 };
+
+type FetchGroupsBody = {
+  success: boolean,
+  message: string | Group[]
+}
+
+export type Group = {
+  name: string,
+  id: string
+}
+
+export async function fetchGroups() {
+  const authToken = (await cookies()).get("auth_token")
+
+  let fetchGroups: FetchGroupsBody;
+  try {
+    const response = await fetch("https://decidely-api.onrender.com/admin/groups", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${authToken?.value}`
+      }
+    })
+
+    fetchGroups = await response.json();
+
+    if (!fetchGroups.success) {
+      return {
+        error: true,
+        message: fetchGroups.message as string,
+      }
+    }
+
+    return {
+      error: false,
+      message: fetchGroups.message
+    }
+
+  } catch (e) {
+    throw new Error(`Network Error: ${e}`)
+  }
+}

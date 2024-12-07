@@ -1,10 +1,10 @@
 "use client";
 
 import { useActionState } from "react";
-import { createGroup, CreateGroupState } from "./actions";
+import { createGroup } from "./actions";
 import { MoonLoader } from "react-spinners";
 
-export default function CreateGroup({
+export default function CreateGroupModal({
   closeModalAction,
 }: {
   closeModalAction: () => void;

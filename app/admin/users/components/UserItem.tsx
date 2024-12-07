@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Group, User } from "./UserTable";
-import DeleteModal from "./DeleteModal";
+import DeleteUserModal from "./DeleteUserModal";
 import { MoonLoader } from "react-spinners";
 import { changeProxy } from "./actions";
 
@@ -49,7 +49,7 @@ export default function UserItem({
         <tr>
           <td>
             {deleteOpen && (
-              <DeleteModal userId={user.id} closeModalAction={closeDelete} />
+              <DeleteUserModal userId={user.id} closeModalAction={closeDelete} />
             )}
           </td>
         </tr>
