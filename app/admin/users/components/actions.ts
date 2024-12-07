@@ -21,9 +21,34 @@ type User = {
 };
 
 type GroupResponseBody = {
-  success: boolean,
-  message: string | Group | null
-}
+  success: boolean;
+  message: string | Group | null;
+};
+
+type CreateGroupBody = {
+  success: boolean;
+  message:
+    | string
+    | {
+        name: string;
+        id: string;
+      };
+};
+
+export type CreateState = {
+  success: boolean;
+  message: string;
+};
+
+type FetchGroupsBody = {
+  success: boolean;
+  message: string | Group[];
+};
+
+export type Group = {
+  name: string;
+  id: string;
+};
 
 export async function deleteUser(userId: string) {
   const authToken = (await cookies()).get("auth_token");
@@ -61,44 +86,44 @@ export async function deleteUser(userId: string) {
 }
 
 export async function deleteGroup(groupId: string) {
-  const authToken = (await cookies()).get("auth_token")
+  const authToken = (await cookies()).get("auth_token");
 
   let parsedDeleteGroup: GroupResponseBody;
   try {
-    const response = await fetch("https://decidely-api.onrender.com/admin/groups", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.value}`
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/groups",
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+        body: JSON.stringify({ groupId: groupId }),
       },
-      body: JSON.stringify({groupId: groupId})
-    })
-    parsedDeleteGroup = await response.json()
+    );
+    parsedDeleteGroup = await response.json();
 
-    if(!parsedDeleteGroup.success) {
+    if (!parsedDeleteGroup.success) {
       return {
         error: true,
-        message: parsedDeleteGroup.message as string
-      }
+        message: parsedDeleteGroup.message as string,
+      };
     }
 
     if (parsedDeleteGroup.message === null) {
       return {
         error: true,
-        message: "Cannot delete group. Group contains users."
-      }
+        message: "Cannot delete group. Group contains users.",
+      };
     }
 
     return {
       error: false,
-      message: ""
-    }
-
+      message: "",
+    };
   } catch (e) {
-    throw new Error(`Network error: ${e}`)
+    throw new Error(`Network error: ${e}`);
   }
-
-
 }
 
 export async function changeProxy(userId: string, newAmount: number) {
@@ -141,12 +166,11 @@ export async function changeProxy(userId: string, newAmount: number) {
 }
 
 export async function createGroup(
-  prevState: CreateGroupState,
+  prevState: CreateState,
   formData: FormData,
 ) {
   const groupName = formData.get("groupName");
   const authToken = (await cookies()).get("auth_token");
-
 
   let createGroupFetch: CreateGroupBody;
   try {
@@ -173,7 +197,7 @@ export async function createGroup(
     throw new Error(`Network Error: ${e}`);
   }
 
-  redirect("/admin/users")
+  redirect("/admin/users");
 
   return {
     success: true,
@@ -181,43 +205,21 @@ export async function createGroup(
   };
 }
 
-type CreateGroupBody = {
-  success: boolean;
-  message:
-    | string
-    | {
-        name: string;
-        id: string;
-      };
-};
-
-export type CreateGroupState = {
-  success: boolean;
-  message: string;
-};
-
-type FetchGroupsBody = {
-  success: boolean,
-  message: string | Group[]
-}
-
-export type Group = {
-  name: string,
-  id: string
-}
-
 export async function fetchGroups() {
-  const authToken = (await cookies()).get("auth_token")
+  const authToken = (await cookies()).get("auth_token");
 
   let fetchGroups: FetchGroupsBody;
   try {
-    const response = await fetch("https://decidely-api.onrender.com/admin/groups", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${authToken?.value}`
-      }
-    })
+    const response = await fetch(
+      "https://decidely-api.onrender.com/admin/groups",
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken?.value}`,
+        },
+      },
+    );
 
     fetchGroups = await response.json();
 
@@ -225,15 +227,24 @@ export async function fetchGroups() {
       return {
         error: true,
         message: fetchGroups.message as string,
-      }
+      };
     }
 
     return {
       error: false,
-      message: fetchGroups.message
-    }
-
+      message: fetchGroups.message,
+    };
   } catch (e) {
-    throw new Error(`Network Error: ${e}`)
+    throw new Error(`Network Error: ${e}`);
+  }
+}
+
+export async function createUser(prevState: CreateState, formData: FormData) {
+  const authToken = (await cookies()).get("auth_token");
+
+  console.log(formData)
+  return {
+    success: true,
+    message: ""
   }
 }
