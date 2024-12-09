@@ -13,7 +13,7 @@ Frontend application for Decidely App. Backend on https://github.com/ComradeStij
 1. Clone the repo
 2. Install NPM packages and build
   ```sh
-  npm install --lregacy-peer-deps && next build
+  npm install --legacy-peer-deps && next build
   ```
 3. Start server
   ```
