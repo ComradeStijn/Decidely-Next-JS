@@ -73,7 +73,7 @@ export default function UserItem({
             disabled={!proxyEditable}
             value={proxyAmount}
             className={
-              `transition-transform ${proxyEditable ? "scale-125 font-bold" : "appearance-none p-1"}`
+              `transition-transform bg-gray-100 ${proxyEditable ? "scale-125 font-bold" : "appearance-none p-1"}`
             }
           >
             <option value="1">1</option>
