@@ -60,7 +60,7 @@ export async function postForm(prevState: State, formData: FormData) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: true,
-        maxAge: 60 * 60 * 5
+        maxAge: 60 * 60
       });
     }
   } catch (e) {
